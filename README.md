@@ -82,7 +82,22 @@ composer install
 php artisan key:generate
 ```
 
-(3) Update the folder permission for Laravel's logging activities. Webserver user and group depend on your webserver and your OS. To figure out what's your web server user and group use the following commands.
+(3) Run below script to create the database structure
+```
+php artisan migrate
+```
+
+(4) Run below script to install nodejs packages dependencies
+```
+npm install
+```
+
+(5) Run below script to make Vite Build production files
+```
+npm run build
+```
+
+(6) Update the folder permission for Laravel's logging activities. Webserver user and group depend on your webserver and your OS. To figure out what's your web server user and group use the following commands.
 
 For NGINX use:
 ```
@@ -99,16 +114,18 @@ chmod -R 775 storage
 chmod -R 775 bootstrap/cache
 ```
 
-(4) Create the nginx configuration file named "`example.com`" to the folder "`/etc/nginx/sites-available`"
+(7) Create the nginx configuration file named "`example.com`" to the folder "`/etc/nginx/sites-available`"
 ```
 server {
     listen 80;
     listen [::]:80;
     server_name example.com;
-    root /home/{your_username}/srv/laravel-jetstream-inertia/public;
+    root /srv/laravel-jetstream-inertia/public;
 
     add_header X-Frame-Options "SAMEORIGIN";
     add_header X-Content-Type-Options "nosniff";
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
 
     index index.php;
 
@@ -133,4 +150,20 @@ server {
         deny all;
     }
 }
+```
+
+(8) Run below script to check overall NGINX config files:
+```
+sudo nginx -t
+```
+Make sure those return OK.
+
+(9) Run below script to make those domain site is enabled
+```
+sudo ln -s /etc/nginx/sites-available/example.com /etc/nginx/sites-enabled/
+```
+
+(10) Run below script to restart the NGINX service:
+```
+sudo nginx -s reload
 ```
